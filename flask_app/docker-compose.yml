@@ -1,0 +1,37 @@
+services:
+  flask:
+    container_name: app-flask
+    image: app-flask-external-router_cm
+    build:
+      context: .
+      dockerfile: Dockerfile
+  
+  nginx-flask:
+    container_name: app_nginx
+    image: nginx-for-flask
+    build:
+      context: ../nginx-for-app-flask/
+      dockerfile: Dockerfile
+    ports: 
+      - "8080:80"
+    
+    depends_on:
+      - flask
+  base_datos:
+    container_name: base_datos_mysql 
+    image: mysql_for_flask_router_cm   
+    build:
+      context: .
+      dockerfile: Dockerfile-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: lista_negra
+    volumes:
+      - mysql_volume:/var/lib/mysql
+  
+    depends_on:
+      - flask      
+volumes:
+  mysql_volume:
+      
+        
